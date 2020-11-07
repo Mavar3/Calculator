@@ -1,5 +1,8 @@
 package com.company;
 
+/**
+ * Класс, предназначенный для расчёта текстового выражения
+ */
 public class Calculator {
     /**
      * Вывести на экран значение выражения из передваеммого текста
@@ -43,12 +46,10 @@ public class Calculator {
             while (multiply_position != -1 || division_position != -1) {
                 if (multiply_position == -1) {
                     text = arifmeticText(text, division_position);
-//                multiply_position = text.indexOf('*'); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                     division_position = text.indexOf('/');
                 } else if (division_position == -1) {
                     text = arifmeticText(text, multiply_position);
                     multiply_position = text.indexOf('*');
-//                division_position = text.indexOf('/'); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                 } else {
                     if (multiply_position < division_position) {
                         text = arifmeticText(text, multiply_position);
@@ -97,12 +98,18 @@ public class Calculator {
         switch (text.charAt(arifPos)) {
             case '*':
                 count = previousNum(text, arifPos) * nextNum(text, arifPos);
-                break; case '/': if (nextNum(text, arifPos) == 0) {
-                throw new DivisionExeption("На ноль делить нельзя!");
-            }
+                break;
+            case '/':
+                if (nextNum(text, arifPos) == 0) {
+                    throw new DivisionExeption("На ноль делить нельзя!");
+                }
                 count = previousNum(text, arifPos) / nextNum(text, arifPos);
-                break; case '+': count = previousNum(text, arifPos) + nextNum(text, arifPos);
-                break; case '-': count = previousNum(text, arifPos) - nextNum(text, arifPos);
+                break;
+            case '+':
+                count = previousNum(text, arifPos) + nextNum(text, arifPos);
+                break;
+            case '-':
+                count = previousNum(text, arifPos) - nextNum(text, arifPos);
                 break;
         }
         int startOfNum = 0;
@@ -141,9 +148,7 @@ public class Calculator {
             switch (text.charAt(i)) {
                 case '-':
 //                    isNegativeNum = true;
-                case '+':
-                case '/':
-                case '*':
+                case '+': case '/': case '*':
                     startOfNum = i + 1;
                     break;
             }
@@ -161,10 +166,7 @@ public class Calculator {
         int endOfNum = text.length() - 1;
         for (int i = position + 1; i < text.length(); i++) {
             switch (text.charAt(i)) {
-                case '-':
-                case '+':
-                case '/':
-                case '*':
+                case '-': case '+': case '/': case '*':
                     endOfNum = i;
                     break;
             }
@@ -172,7 +174,7 @@ public class Calculator {
                 break;
             }
         }
-        String textForConvertDouble = position + 1 == endOfNum ? text.substring(position + 1)
+        String textForConvertDouble = text.length() - 1 == endOfNum ? text.substring(position + 1)
                 : text.substring(position + 1, endOfNum);
         Double textInDouble = Double.parseDouble(textForConvertDouble);
         return textInDouble;
@@ -192,17 +194,8 @@ public class Calculator {
         String formatText = "";
         for(int i = 0; i < text.length(); i++) {
             switch (text.charAt(i)) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    if(isPreviousNumber & isPreviousSpace){
+                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                    if(isPreviousNumber && isPreviousSpace){
                         throw new ExpressionExeption("Пробелы между цифрами не допустимы!");
                     }
                     isPreviousNumber = true;
@@ -210,11 +203,8 @@ public class Calculator {
                     isPreviousSpace = false;
                     formatText += text.charAt(i);
                     break;
-                case '+':
-                case '-':
-                case '*':
-                case '/':
-                    if(isPreviousArifmetic | (isItFirstArifmetic & !isPreviousNumber)) {
+                case '+': case '-': case '*': case '/':
+                    if(isPreviousArifmetic || (isItFirstArifmetic && !isPreviousNumber)) {
                         throw new ExpressionExeption("Невозможно распознать арифметические знаки.");
                     }
                     isPreviousArifmetic = true;
@@ -228,7 +218,7 @@ public class Calculator {
                     isPreviousSpace = true;
                     break;
                 case '.':
-                    if (isPreviousSpace | isPreviousArifmetic) {
+                    if (isPreviousSpace || isPreviousArifmetic) {
                         throw new ExpressionExeption("Перед точкой недопустимы иной символ, кроме как цифра!");
                     }
                     if (isPointExist) {
@@ -239,12 +229,7 @@ public class Calculator {
                     break;
                 case ',':
                     throw new ExpressionExeption("Запятые не допустимы, используйте символ точки");
-                case '(':
-                case '[':
-                case '{':
-                case ')':
-                case ']':
-                case '}':
+                case '(': case '[': case '{': case ')': case ']': case '}':
                     throw new ExpressionExeption("Скобки не допустимы!");
                     // Скобки тоже можно отнести, как и запятую, к недопустимым символам, но для понимания,
                     // решено было вывести отдельное сообщение под них.
@@ -254,7 +239,4 @@ public class Calculator {
         }
         return formatText;
     }
-
-
-
 }

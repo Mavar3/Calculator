@@ -3,7 +3,7 @@ package com.company;
 /**
  * Класс, предназначенный для расчёта текстового выражения
  */
-public class CalculatorWhithText extends CalculatorFather {
+public class CalculatorWithText extends CalculatorFather {
     /**
      * Вывести на экран значение выражения из передваеммого текста
      * @param text Передаваемое выражение
@@ -38,7 +38,7 @@ public class CalculatorWhithText extends CalculatorFather {
      * @param text отформатированное выражение
      * @return значение подсчёта
      */
-    private double count(String text) throws DivisionExeption {
+    private double count(String text) throws DivisionException {
         try {
             int multiply_position = text.indexOf('*');
             int division_position = text.indexOf('/');
@@ -82,8 +82,8 @@ public class CalculatorWhithText extends CalculatorFather {
             }
             return Double.parseDouble(text);
         }
-        catch (DivisionExeption ex) {
-            throw new DivisionExeption("Ошибка деления!",ex);
+        catch (DivisionException ex) {
+            throw new DivisionException("Ошибка деления!",ex);
         }
     }
 
@@ -94,7 +94,7 @@ public class CalculatorWhithText extends CalculatorFather {
      * @return Новый текст. арифметический символ, числа до и после - выкинуту и записан результат действия.
      * В случае ошибки выдаётся null.
      */
-    private String arifmeticText(String text, int arifPos) throws DivisionExeption {
+    private String arifmeticText(String text, int arifPos) throws DivisionException {
         double count = 0.00;
         switch (text.charAt(arifPos)) {
             case '*':
@@ -102,7 +102,7 @@ public class CalculatorWhithText extends CalculatorFather {
                 break;
             case '/':
                 if (nextNum(text, arifPos) == 0) {
-                    throw new DivisionExeption("На ноль делить нельзя!");
+                    throw new DivisionException("На ноль делить нельзя!");
                 }
                 count = previousNum(text, arifPos) / nextNum(text, arifPos);
                 break;

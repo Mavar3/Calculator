@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CalculatorWhithList extends CalculatorFather {
+public class CalculatorWithList extends CalculatorFather {
     /**
      * Вывести на экран значение выражения из передваеммого текста с использованием алгоритма списка
      * @param text Передаваемое выражение
@@ -39,7 +39,7 @@ public class CalculatorWhithList extends CalculatorFather {
      * @param list выражение в виде списка
      * @return значение подсчёта
      */
-    private double countList(List<String> list) throws DivisionExeption {
+    private double countList(List<String> list) throws DivisionException {
         try {
             int multiply_position = list.indexOf("*");
             int division_position = list.indexOf("/");
@@ -83,8 +83,8 @@ public class CalculatorWhithList extends CalculatorFather {
             }
             return Double.parseDouble(list.get(0));
         }
-        catch (DivisionExeption ex) {
-            throw new DivisionExeption("Ошибка деления!",ex);
+        catch (DivisionException ex) {
+            throw new DivisionException("Ошибка деления!",ex);
         }
     }
 
@@ -95,7 +95,7 @@ public class CalculatorWhithList extends CalculatorFather {
      * @return Новый список. арифметический символ, числа до и после - выкинуту и записан результат действия.
      * В случае ошибки выдаётся null.
      */
-    private List<String> arifmeticList(List<String> list, int arifPos) throws DivisionExeption {
+    private List<String> arifmeticList(List<String> list, int arifPos) throws DivisionException {
         double count = 0.00;
         switch (list.get(arifPos)) {
             case "*":
@@ -103,7 +103,7 @@ public class CalculatorWhithList extends CalculatorFather {
                 break;
             case "/":
                 if (list.get(arifPos + 1) == "0") {
-                    throw new DivisionExeption("На ноль делить нельзя!");
+                    throw new DivisionException("На ноль делить нельзя!");
                 }
                 count = Double.parseDouble(list.get(arifPos - 1)) / Double.parseDouble(list.get(arifPos + 1));
                 break;
@@ -131,8 +131,7 @@ public class CalculatorWhithList extends CalculatorFather {
             symbols = enviromentArifmetic("symbols");
         }
         catch (Exception ex) {
-            System.err.println(ex);
-            return null;
+            throw new EnviromentException("Ошибка переменной окружения", ex);
         }
         // Преобразование
         for (String symbol: symbols) {
@@ -144,23 +143,22 @@ public class CalculatorWhithList extends CalculatorFather {
 
     private List<String> enviromentArifmetic(String envName) throws EnviromentException {
         // Считывание переменных из переменных окружения (усложнение кода! В данном случе - этот метод бесполезен)
-        try {
-            var env = System.getenv();
-            String inputSymbols = env.get(envName);
-            List<String> symbols = new ArrayList<>();
-            for (int i = 0; i < inputSymbols.length(); i++) {
-                if (inputSymbols.charAt(i) != '+' && inputSymbols.charAt(i) != '-' && inputSymbols.charAt(i) != '*'
-                        && inputSymbols.charAt(i) != '/') {
-                    throw new ExpressionExeption("В переменных окружения есть не подходящий символ!");
-                }
-                symbols.add(Character.toString(inputSymbols.charAt(i)));
+        var env = System.getenv();
+        String inputSymbols = env.get(envName);
+        if (inputSymbols == null) {
+            throw new EnviromentException("Переменная окружения не определена!");
+        }
+        List<String> symbols = new ArrayList<>();
+        for (int i = 0; i < inputSymbols.length(); i++) {
+            if (inputSymbols.charAt(i) != '+' && inputSymbols.charAt(i) != '-' && inputSymbols.charAt(i) != '*'
+                    && inputSymbols.charAt(i) != '/') {
+                throw new EnviromentException("В переменных окружения есть не подходящий символ!");
             }
-            if (symbols.isEmpty())
-                throw new ExpressionExeption("Нет символов!");
-            return symbols;
+            symbols.add(Character.toString(inputSymbols.charAt(i)));
         }
-        catch (Exception ex) {
-            throw new EnviromentException("Ошибка переменной окружения!", ex);
+        if (symbols.isEmpty()) {
+            throw new EnviromentException("Нет символов!");
         }
+        return symbols;
     }
 }

@@ -18,6 +18,9 @@ public abstract class CalculatorFather {
         boolean isItFirstArifmetic = true;
         boolean isPointExist = false;
         String formatText = "";
+        if (text.length() == 0) {
+            throw new ExpressionExeption("Слишком мало параметров");
+        }
         for(int i = 0; i < text.length(); i++) {
             switch (text.charAt(i)) {
                 case '0': case '1': case '2': case '3':

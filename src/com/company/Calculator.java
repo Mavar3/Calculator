@@ -1,6 +1,8 @@
 package com.company;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -28,6 +30,25 @@ public class Calculator {
     public static Double calculate(String text) {
         try {
             return count(checkText(text));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void printCalculateList(String text) {
+        try {
+            System.out.println(countList(parseText(checkText(text))));
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static Double calculateList(String text) {
+        try {
+            return countList(parseText(checkText(text)));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -87,6 +108,95 @@ public class Calculator {
         catch (DivisionExeption ex) {
             throw new DivisionExeption("Ошибка деления!",ex);
         }
+    }
+
+    /**
+     * Метод подсчёта
+     * @param text выражение в виде списка
+     * @return значение подсчёта
+     */
+    private static double countList(List<String> text) throws DivisionExeption {
+        try {
+            int multiply_position = text.indexOf("*");
+            int division_position = text.indexOf("/");
+            int add_position = text.indexOf("+");
+            int subtract_position = text.indexOf("-");
+            while (multiply_position != -1 || division_position != -1) {
+                if (multiply_position == -1) {
+                    text = arifmeticList(text, division_position);
+                    division_position = text.indexOf("/");
+                } else if (division_position == -1) {
+                    text = arifmeticList(text, multiply_position);
+                    multiply_position = text.indexOf("*");
+                } else {
+                    if (multiply_position < division_position) {
+                        text = arifmeticList(text, multiply_position);
+                        multiply_position = text.indexOf("*");
+                        division_position = text.indexOf("/"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    }
+                    if (division_position < multiply_position) {
+                        text = arifmeticList(text, division_position);
+                        multiply_position = text.indexOf("*"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                        division_position = text.indexOf("/");
+                    }
+                }
+            }
+            while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
+                if (add_position == -1) {
+                    text = arifmeticList(text, subtract_position);
+                    subtract_position = text.indexOf("-");
+                } else if (subtract_position == -1) {
+                    text = arifmeticList(text, add_position);
+                    add_position = text.indexOf("+");
+                } else {
+                    text = arifmeticList(text, add_position);
+                    add_position = text.indexOf("+");
+                    subtract_position = text.indexOf("-"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    text = arifmeticList(text, subtract_position);
+                    add_position = text.indexOf("+"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    subtract_position = text.indexOf("-");
+                }
+            }
+            return Double.parseDouble(text.get(0));
+        }
+        catch (DivisionExeption ex) {
+            throw new DivisionExeption("Ошибка деления!",ex);
+        }
+    }
+
+
+    /**
+     * Заменяет два числа и арифметический знак, на значение после арифметического действия
+     * @param text Уравнение в виде списка
+     * @param arifPos Позиция знака
+     * @return Новый список. арифметический символ, числа до и после - выкинуту и записан результат действия.
+     * В случае ошибки выдаётся null.
+     */
+    private static List<String> arifmeticList(List<String> text, int arifPos) throws DivisionExeption {
+        double count = 0.00;
+        switch (text.get(arifPos)) {
+            case "*":
+                count = Double.parseDouble(text.get(arifPos - 1)) * Double.parseDouble(text.get(arifPos + 1));
+                break;
+            case "/":
+                if (text.get(arifPos + 1) == "0") {
+                    throw new DivisionExeption("На ноль делить нельзя!");
+                }
+                count = Double.parseDouble(text.get(arifPos - 1)) / Double.parseDouble(text.get(arifPos + 1));
+                break;
+            case "+":
+                count = Double.parseDouble(text.get(arifPos - 1)) + Double.parseDouble(text.get(arifPos + 1));
+                break;
+            case "-":
+                count = Double.parseDouble(text.get(arifPos - 1)) - Double.parseDouble(text.get(arifPos + 1));
+                break;
+        }
+        int startOfNum = arifPos - 1;
+        int endOfNum = arifPos + 1;
+        text.set(arifPos, String.valueOf(count));
+        text.remove(endOfNum);
+        text.remove(startOfNum);
+        return text;
     }
 
     /**
@@ -196,16 +306,22 @@ public class Calculator {
     /**
      * Разбивает текст на числа и операции, записывает в список как текст
      * @param text текст для разбивания
-     * @param symbols Список символов по которым разбивать
      * @return Список чисел и операций
      */
-    private static List<String> parseText(String text, List<String> symbols) {
+    private static List<String> parseText(String text) {
+        // Считывание переменных из переменных окружения (Выделить в отдельный метод)
+        var env = System.getenv();
+        String inputSymbols = env.get("symbols");
+        List<String> symbols = new ArrayList<>();
+        for (int i = 0; i < inputSymbols.length(); i++) {
+            symbols.add(Character.toString(inputSymbols.charAt(i)));
+        }
+        // Преобразование
         for (String symbol: symbols) {
             String newSimbol = " " + symbol + " ";
             text = text.replace(symbol, newSimbol);
-            System.out.println(text);
         }
-        return Arrays.asList(text.split(" ").clone());
+        return new LinkedList<String>(Arrays.asList(text.split(" ").clone()));
     }
 
     /**
@@ -263,7 +379,10 @@ public class Calculator {
                     // решено было вывести отдельное сообщение под них.
                 default:
                     throw new ExpressionExeption("В строке есть недопустимый символ!\n");
+                }
             }
+        if (isPreviousArifmetic) {
+            throw new ExpressionExeption("Строка не может заканчиваться на арифметический символ!\n");
         }
         return formatText;
     }

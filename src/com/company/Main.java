@@ -1,12 +1,28 @@
 package com.company;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+
 public class Main {
     public static void main(String[] args) {
-        //Не забыть сделать это через ввод параметра консольной строки
-//        System.out.println(args[0]);
-        String test_text = "5+10*25.02 -   70 / 35 * 2 + 30 - 20*2";
+        String test_text = "398 + 519/83 - 8124";
         Calculator.printCalculate(test_text);
-//        Double test = Calculator.calculate(test_text);
-//        System.out.printf("Значение полученное мной из переменной: " + test);
+//        List<String> symbols = new ArrayList<String>();
+//        symbols.add("+");
+        var env = System.getenv();
+
+        String inputSymbols = env.get("symbols");
+        List<String> symbols = new ArrayList<>();
+        for (int i = 0; i < inputSymbols.length(); i++) {
+            symbols.add(Character.toString(inputSymbols.charAt(i)));
+            //if (inputSymbols.charAt(i) == '+' || inputSymbols.charAt(i) == '*' || inputSymbols.charAt(i) == '^') {
+            //    symbols.set(i, "\\" + symbols.get(i));
+            //}
+        }
+        System.out.println(symbols.size());
     }
+
+
 }

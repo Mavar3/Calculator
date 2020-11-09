@@ -1,5 +1,8 @@
 package com.company;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Класс, предназначенный для расчёта текстового выражения
  */
@@ -63,7 +66,7 @@ public class Calculator {
                     }
                 }
             }
-            while (add_position != -1 || subtract_position != -1) {
+            while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
                 if (add_position == -1) {
                     text = arifmeticText(text, subtract_position);
                     subtract_position = text.indexOf('-');
@@ -93,7 +96,7 @@ public class Calculator {
      * @return Новый текст. арифметический символ, числа до и после - выкинуту и записан результат действия.
      * В случае ошибки выдаётся null.
      */
-    private static String arifmeticText(String text, int arifPos) throws DivisionExeption{
+    private static String arifmeticText(String text, int arifPos) throws DivisionExeption {
         double count = 0.00;
         switch (text.charAt(arifPos)) {
             case '*':
@@ -140,7 +143,12 @@ public class Calculator {
         return text.substring(0, startOfNum) + String.valueOf(count) + text.substring(endOfNum);
     }
 
-
+    /**
+     * Предыдущее число
+     * @param text выражение в виде текста
+     * @param position позиция символа от которого считать
+     * @return Предыдущее число типа Double
+     */
     private static double previousNum(String text, int position) {
         int startOfNum = 0;
         boolean isNegativeNum = false;
@@ -156,12 +164,17 @@ public class Calculator {
                 break;
             }
         }
-
         Double textInDouble = Double.parseDouble((text.substring(startOfNum, position)));
 //        textInDouble = isNegativeNum ? -textInDouble : textInDouble;
         return textInDouble;
     }
 
+    /**
+     * Следующее число
+     * @param text выражение в виде текста
+     * @param position позиция символа от которого считать
+     * @return Следующее число типа Double
+     */
     private static double nextNum(String text, int position) {
         int endOfNum = text.length() - 1;
         for (int i = position + 1; i < text.length(); i++) {
@@ -181,9 +194,24 @@ public class Calculator {
     }
 
     /**
+     * Разбивает текст на числа и операции, записывает в список как текст
+     * @param text текст для разбивания
+     * @param symbols Список символов по которым разбивать
+     * @return Список чисел и операций
+     */
+    private static List<String> parseText(String text, List<String> symbols) {
+        for (String symbol: symbols) {
+            String newSimbol = " " + symbol + " ";
+            text = text.replace(symbol, newSimbol);
+            System.out.println(text);
+        }
+        return Arrays.asList(text.split(" ").clone());
+    }
+
+    /**
      * Проверяет текст на допустимые символы
      * @param text исходный текст
-     * @return  возвращает текст без пробелов между символами или null при ошибке
+     * @return  возвращает текст без пробелов между символами или ошибку
      */
     private static String checkText(String text) throws ExpressionExeption {
         boolean isPreviousNumber = false;

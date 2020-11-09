@@ -1,5 +1,7 @@
 package com.company;
 
+import jdk.jfr.StackTrace;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,11 +9,24 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        String test_text = "398 + 519/83 - 8124";
+        try {
+            if (args.length - 1 > 0) {
+                throw new CommandArgsExeption("Слишком много параметров командной строки!\n" +
+                        "Введите выражение в \"<выражение>\" кавычках");
+            }
+            if (args.length - 1 < 0) {
+                throw new CommandArgsExeption("Слишком мало параметров командной строки!\n" +
+                        "Введите выражение в \"<выражение>\" кавычках");
+            }
+        }
+        catch (CommandArgsExeption ex) {
+            ex.printStackTrace();
+        }
+        String test_text = args[0];
         Calculator.printCalculate(test_text);
-//        List<String> symbols = new ArrayList<String>();
-//        symbols.add("+");
         Calculator.printCalculateList(test_text);
+
+
     }
 
 

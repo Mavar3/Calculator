@@ -37,6 +37,10 @@ public class Calculator {
         }
     }
 
+    /**
+     * Вывести на экран значение выражения из передваеммого текста с использованием алгоритма списка
+     * @param text Передаваемое выражение
+     */
     public static void printCalculateList(String text) {
         try {
             System.out.println(countList(parseText(checkText(text))));
@@ -46,6 +50,11 @@ public class Calculator {
         }
     }
 
+    /**
+     * Вернуть значение выражения из передваеммого текста с использованием алгоритма списка
+     * @param text Передаваемое выражение
+     * @return double или null при ошибке
+     */
     public static Double calculateList(String text) {
         try {
             return countList(parseText(checkText(text)));
@@ -112,52 +121,52 @@ public class Calculator {
 
     /**
      * Метод подсчёта
-     * @param text выражение в виде списка
+     * @param list выражение в виде списка
      * @return значение подсчёта
      */
-    private static double countList(List<String> text) throws DivisionExeption {
+    private static double countList(List<String> list) throws DivisionExeption {
         try {
-            int multiply_position = text.indexOf("*");
-            int division_position = text.indexOf("/");
-            int add_position = text.indexOf("+");
-            int subtract_position = text.indexOf("-");
+            int multiply_position = list.indexOf("*");
+            int division_position = list.indexOf("/");
+            int add_position = list.indexOf("+");
+            int subtract_position = list.indexOf("-");
             while (multiply_position != -1 || division_position != -1) {
                 if (multiply_position == -1) {
-                    text = arifmeticList(text, division_position);
-                    division_position = text.indexOf("/");
+                    list = arifmeticList(list, division_position);
+                    division_position = list.indexOf("/");
                 } else if (division_position == -1) {
-                    text = arifmeticList(text, multiply_position);
-                    multiply_position = text.indexOf("*");
+                    list = arifmeticList(list, multiply_position);
+                    multiply_position = list.indexOf("*");
                 } else {
                     if (multiply_position < division_position) {
-                        text = arifmeticList(text, multiply_position);
-                        multiply_position = text.indexOf("*");
-                        division_position = text.indexOf("/"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                        list = arifmeticList(list, multiply_position);
+                        multiply_position = list.indexOf("*");
+                        division_position = list.indexOf("/"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                     }
                     if (division_position < multiply_position) {
-                        text = arifmeticList(text, division_position);
-                        multiply_position = text.indexOf("*"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                        division_position = text.indexOf("/");
+                        list = arifmeticList(list, division_position);
+                        multiply_position = list.indexOf("*"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                        division_position = list.indexOf("/");
                     }
                 }
             }
             while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
                 if (add_position == -1) {
-                    text = arifmeticList(text, subtract_position);
-                    subtract_position = text.indexOf("-");
+                    list = arifmeticList(list, subtract_position);
+                    subtract_position = list.indexOf("-");
                 } else if (subtract_position == -1) {
-                    text = arifmeticList(text, add_position);
-                    add_position = text.indexOf("+");
+                    list = arifmeticList(list, add_position);
+                    add_position = list.indexOf("+");
                 } else {
-                    text = arifmeticList(text, add_position);
-                    add_position = text.indexOf("+");
-                    subtract_position = text.indexOf("-"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                    text = arifmeticList(text, subtract_position);
-                    add_position = text.indexOf("+"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                    subtract_position = text.indexOf("-");
+                    list = arifmeticList(list, add_position);
+                    add_position = list.indexOf("+");
+                    subtract_position = list.indexOf("-"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    list = arifmeticList(list, subtract_position);
+                    add_position = list.indexOf("+"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    subtract_position = list.indexOf("-");
                 }
             }
-            return Double.parseDouble(text.get(0));
+            return Double.parseDouble(list.get(0));
         }
         catch (DivisionExeption ex) {
             throw new DivisionExeption("Ошибка деления!",ex);
@@ -167,36 +176,34 @@ public class Calculator {
 
     /**
      * Заменяет два числа и арифметический знак, на значение после арифметического действия
-     * @param text Уравнение в виде списка
+     * @param list Уравнение в виде списка
      * @param arifPos Позиция знака
      * @return Новый список. арифметический символ, числа до и после - выкинуту и записан результат действия.
      * В случае ошибки выдаётся null.
      */
-    private static List<String> arifmeticList(List<String> text, int arifPos) throws DivisionExeption {
+    private static List<String> arifmeticList(List<String> list, int arifPos) throws DivisionExeption {
         double count = 0.00;
-        switch (text.get(arifPos)) {
+        switch (list.get(arifPos)) {
             case "*":
-                count = Double.parseDouble(text.get(arifPos - 1)) * Double.parseDouble(text.get(arifPos + 1));
+                count = Double.parseDouble(list.get(arifPos - 1)) * Double.parseDouble(list.get(arifPos + 1));
                 break;
             case "/":
-                if (text.get(arifPos + 1) == "0") {
+                if (list.get(arifPos + 1) == "0") {
                     throw new DivisionExeption("На ноль делить нельзя!");
                 }
-                count = Double.parseDouble(text.get(arifPos - 1)) / Double.parseDouble(text.get(arifPos + 1));
+                count = Double.parseDouble(list.get(arifPos - 1)) / Double.parseDouble(list.get(arifPos + 1));
                 break;
             case "+":
-                count = Double.parseDouble(text.get(arifPos - 1)) + Double.parseDouble(text.get(arifPos + 1));
+                count = Double.parseDouble(list.get(arifPos - 1)) + Double.parseDouble(list.get(arifPos + 1));
                 break;
             case "-":
-                count = Double.parseDouble(text.get(arifPos - 1)) - Double.parseDouble(text.get(arifPos + 1));
+                count = Double.parseDouble(list.get(arifPos - 1)) - Double.parseDouble(list.get(arifPos + 1));
                 break;
         }
-        int startOfNum = arifPos - 1;
-        int endOfNum = arifPos + 1;
-        text.set(arifPos, String.valueOf(count));
-        text.remove(endOfNum);
-        text.remove(startOfNum);
-        return text;
+        list.set(arifPos, String.valueOf(count));
+        list.remove(arifPos + 1);
+        list.remove(arifPos - 1);
+        return list;
     }
 
     /**

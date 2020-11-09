@@ -309,12 +309,13 @@ public class Calculator {
      * @return Список чисел и операций
      */
     private static List<String> parseText(String text) {
-        // Считывание переменных из переменных окружения (Выделить в отдельный метод)
-        var env = System.getenv();
-        String inputSymbols = env.get("symbols");
-        List<String> symbols = new ArrayList<>();
-        for (int i = 0; i < inputSymbols.length(); i++) {
-            symbols.add(Character.toString(inputSymbols.charAt(i)));
+        List<String> symbols = new ArrayList<String>();
+        try {
+            symbols = enviromentArifmetic("symbols");
+        }
+        catch (Exception ex) {
+            System.err.println(ex);
+            return null;
         }
         // Преобразование
         for (String symbol: symbols) {
@@ -322,6 +323,23 @@ public class Calculator {
             text = text.replace(symbol, newSimbol);
         }
         return new LinkedList<String>(Arrays.asList(text.split(" ").clone()));
+    }
+
+    private static List<String> enviromentArifmetic(String envName) throws ExpressionExeption {
+        // Считывание переменных из переменных окружения (усложнение кода!)
+        var env = System.getenv();
+        String inputSymbols = env.get(envName);
+        List<String> symbols = new ArrayList<>();
+        for (int i = 0; i < inputSymbols.length(); i++) {
+            if (inputSymbols.charAt(i) != '+' && inputSymbols.charAt(i) != '-' && inputSymbols.charAt(i) != '*'
+                    && inputSymbols.charAt(i) != '/') {
+                throw new ExpressionExeption("В переменных окружения есть не подходящий символ!");
+            }
+            symbols.add(Character.toString(inputSymbols.charAt(i)));
+        }
+        if (symbols.isEmpty())
+            throw new ExpressionExeption("Нет символов!");
+        return symbols;
     }
 
     /**
@@ -338,7 +356,9 @@ public class Calculator {
         String formatText = "";
         for(int i = 0; i < text.length(); i++) {
             switch (text.charAt(i)) {
-                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+                case '0': case '1': case '2': case '3':
+                    case '4': case '5': case '6': case '7':
+                        case '8': case '9':
                     if(isPreviousNumber && isPreviousSpace){
                         throw new ExpressionExeption("Пробелы между цифрами не допустимы!");
                     }

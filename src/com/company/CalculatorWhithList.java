@@ -43,8 +43,6 @@ public class CalculatorWhithList extends CalculatorFather {
         try {
             int multiply_position = list.indexOf("*");
             int division_position = list.indexOf("/");
-            int add_position = list.indexOf("+");
-            int subtract_position = list.indexOf("-");
             while (multiply_position != -1 || division_position != -1) {
                 if (multiply_position == -1) {
                     list = arifmeticList(list, division_position);
@@ -65,6 +63,8 @@ public class CalculatorWhithList extends CalculatorFather {
                     }
                 }
             }
+            int add_position = list.indexOf("+");
+            int subtract_position = list.indexOf("-");
             while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
                 if (add_position == -1) {
                     list = arifmeticList(list, subtract_position);
@@ -125,7 +125,7 @@ public class CalculatorWhithList extends CalculatorFather {
      * @param text текст для разбивания
      * @return Список чисел и операций
      */
-    private List<String> parseText(String text) {
+    private List<String> parseText(String text) throws EnviromentException{
         List<String> symbols = new ArrayList<String>();
         try {
             symbols = enviromentArifmetic("symbols");
@@ -142,20 +142,25 @@ public class CalculatorWhithList extends CalculatorFather {
         return new LinkedList<String>(Arrays.asList(text.split(" ").clone()));
     }
 
-    private List<String> enviromentArifmetic(String envName) throws ExpressionExeption {
+    private List<String> enviromentArifmetic(String envName) throws EnviromentException {
         // Считывание переменных из переменных окружения (усложнение кода! В данном случе - этот метод бесполезен)
-        var env = System.getenv();
-        String inputSymbols = env.get(envName);
-        List<String> symbols = new ArrayList<>();
-        for (int i = 0; i < inputSymbols.length(); i++) {
-            if (inputSymbols.charAt(i) != '+' && inputSymbols.charAt(i) != '-' && inputSymbols.charAt(i) != '*'
-                    && inputSymbols.charAt(i) != '/') {
-                throw new ExpressionExeption("В переменных окружения есть не подходящий символ!");
+        try {
+            var env = System.getenv();
+            String inputSymbols = env.get(envName);
+            List<String> symbols = new ArrayList<>();
+            for (int i = 0; i < inputSymbols.length(); i++) {
+                if (inputSymbols.charAt(i) != '+' && inputSymbols.charAt(i) != '-' && inputSymbols.charAt(i) != '*'
+                        && inputSymbols.charAt(i) != '/') {
+                    throw new ExpressionExeption("В переменных окружения есть не подходящий символ!");
+                }
+                symbols.add(Character.toString(inputSymbols.charAt(i)));
             }
-            symbols.add(Character.toString(inputSymbols.charAt(i)));
+            if (symbols.isEmpty())
+                throw new ExpressionExeption("Нет символов!");
+            return symbols;
         }
-        if (symbols.isEmpty())
-            throw new ExpressionExeption("Нет символов!");
-        return symbols;
+        catch (Exception ex) {
+            throw new EnviromentException("Ошибка переменной окружения!", ex);
+        }
     }
 }

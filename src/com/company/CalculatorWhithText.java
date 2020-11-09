@@ -42,8 +42,6 @@ public class CalculatorWhithText extends CalculatorFather {
         try {
             int multiply_position = text.indexOf('*');
             int division_position = text.indexOf('/');
-            int add_position = text.indexOf('+');
-            int subtract_position = text.indexOf('-');
             while (multiply_position != -1 || division_position != -1) {
                 if (multiply_position == -1) {
                     text = arifmeticText(text, division_position);
@@ -64,6 +62,8 @@ public class CalculatorWhithText extends CalculatorFather {
                     }
                 }
             }
+            int add_position = text.indexOf('+');
+            int subtract_position = text.indexOf('-');
             while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
                 if (add_position == -1) {
                     text = arifmeticText(text, subtract_position);

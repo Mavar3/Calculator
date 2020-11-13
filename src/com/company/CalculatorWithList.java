@@ -110,20 +110,12 @@ public class CalculatorWithList extends CalculatorFather {
                 count = Double.parseDouble(list.get(arifPos - 1)) * Double.parseDouble(list.get(arifPos + 1));
                 break;
             case "/":
-                int intParam = 1;
-                try {
-                    intParam = (int) Double.parseDouble(list.get(arifPos + 1));
+                if (Double.parseDouble(list.get(arifPos + 1)) == 0.0) {
+                    throw new DivisionException("На ноль делить нельзя!");
                 }
-                catch (Exception ex) {
-                    intParam = 1;
-                }
-                finally {
-                    if (intParam == 0) {
-                        throw new DivisionException("На ноль делить нельзя!");
-                    }
-                    count = Double.parseDouble(list.get(arifPos - 1)) / Double.parseDouble(list.get(arifPos + 1));
-                    break;
-                }
+                count = Double.parseDouble(list.get(arifPos - 1)) / Double.parseDouble(list.get(arifPos + 1));
+                break;
+
             case "+":
                 count = Double.parseDouble(list.get(arifPos - 1)) + Double.parseDouble(list.get(arifPos + 1));
                 break;

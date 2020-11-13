@@ -1,4 +1,4 @@
-package com.company;
+package com.company.Exceptions;
 
 public class ExpressionException extends Exception {
     public ExpressionException() {

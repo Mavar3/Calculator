@@ -1,9 +1,13 @@
 package com.company;
 
+import com.company.Exceptions.DivisionException;
+import com.company.Exceptions.EnviromentException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.lang.*;
 
 public class CalculatorWithList extends CalculatorFather {
     /**
@@ -65,7 +69,7 @@ public class CalculatorWithList extends CalculatorFather {
             }
             int add_position = list.indexOf("+");
             int subtract_position = list.indexOf("-");
-            while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
+            while (add_position != -1 || subtract_position != -1) {
                 if (add_position == -1) {
                     list = arifmeticList(list, subtract_position);
                     subtract_position = list.indexOf("-");
@@ -73,12 +77,16 @@ public class CalculatorWithList extends CalculatorFather {
                     list = arifmeticList(list, add_position);
                     add_position = list.indexOf("+");
                 } else {
-                    list = arifmeticList(list, add_position);
-                    add_position = list.indexOf("+");
-                    subtract_position = list.indexOf("-"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                    list = arifmeticList(list, subtract_position);
-                    add_position = list.indexOf("+"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                    subtract_position = list.indexOf("-");
+                    if (add_position < subtract_position) {
+                        list = arifmeticList(list, add_position);
+                        add_position = list.indexOf("+");
+                        subtract_position = list.indexOf("-"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    }
+                    if (subtract_position < add_position) {
+                        list = arifmeticList(list, subtract_position);
+                        add_position = list.indexOf("+"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                        subtract_position = list.indexOf("-");
+                    }
                 }
             }
             return Double.parseDouble(list.get(0));
@@ -102,11 +110,20 @@ public class CalculatorWithList extends CalculatorFather {
                 count = Double.parseDouble(list.get(arifPos - 1)) * Double.parseDouble(list.get(arifPos + 1));
                 break;
             case "/":
-                if (list.get(arifPos + 1) == "0") {
-                    throw new DivisionException("На ноль делить нельзя!");
+                int intParam = 1;
+                try {
+                    intParam = (int) Double.parseDouble(list.get(arifPos + 1));
                 }
-                count = Double.parseDouble(list.get(arifPos - 1)) / Double.parseDouble(list.get(arifPos + 1));
-                break;
+                catch (Exception ex) {
+                    intParam = 1;
+                }
+                finally {
+                    if (intParam == 0) {
+                        throw new DivisionException("На ноль делить нельзя!");
+                    }
+                    count = Double.parseDouble(list.get(arifPos - 1)) / Double.parseDouble(list.get(arifPos + 1));
+                    break;
+                }
             case "+":
                 count = Double.parseDouble(list.get(arifPos - 1)) + Double.parseDouble(list.get(arifPos + 1));
                 break;
@@ -125,7 +142,7 @@ public class CalculatorWithList extends CalculatorFather {
      * @param text текст для разбивания
      * @return Список чисел и операций
      */
-    private List<String> parseText(String text) throws EnviromentException{
+    private List<String> parseText(String text) throws EnviromentException {
         List<String> symbols = new ArrayList<String>();
         try {
             symbols = enviromentArifmetic("symbols");

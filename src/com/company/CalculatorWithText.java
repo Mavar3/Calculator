@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.Exceptions.DivisionException;
+
 /**
  * Класс, предназначенный для расчёта текстового выражения
  */
@@ -64,20 +66,26 @@ public class CalculatorWithText extends CalculatorFather {
             }
             int add_position = text.indexOf('+');
             int subtract_position = text.indexOf('-');
-            while (add_position != -1 || subtract_position != -1 && subtract_position != 0) {
+            while (add_position != -1 || subtract_position != -1) {
                 if (add_position == -1) {
                     text = arifmeticText(text, subtract_position);
                     subtract_position = text.indexOf('-');
-                } else if (subtract_position == -1) {
+                } else if (subtract_position == -1 || subtract_position == 0) {
+                    // Когда появиться на первом месте число с минусом, то он начнёт складывать, игнорируя
+                    // последующие минусы. Необходимо решить эту проблему.
                     text = arifmeticText(text, add_position);
                     add_position = text.indexOf('+');
                 } else {
-                    text = arifmeticText(text, add_position);
-                    add_position = text.indexOf('+');
-                    subtract_position = text.indexOf('-'); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                    text = arifmeticText(text, subtract_position);
-                    add_position = text.indexOf('+'); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
-                    subtract_position = text.indexOf('-');
+                    if (add_position < subtract_position) {
+                        text = arifmeticText(text, add_position);
+                        add_position = text.indexOf('+');
+                        subtract_position = text.indexOf('-'); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                    }
+                    if (subtract_position < add_position) {
+                        text = arifmeticText(text, subtract_position);
+                        add_position = text.indexOf('+'); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
+                        subtract_position = text.indexOf('-');
+                    }
                 }
             }
             return Double.parseDouble(text);

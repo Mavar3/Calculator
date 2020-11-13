@@ -1,4 +1,4 @@
-package com.company;
+package com.company.Exceptions;
 
 public class CommandArgsException extends Exception {
     public CommandArgsException() {

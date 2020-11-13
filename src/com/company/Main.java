@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.Exceptions.CommandArgsException;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,13 +18,13 @@ public class Main {
             ex.printStackTrace();
         }
         String test_text = args[0];
-        var calculWithText = new CalculatorWithText();
+//        var calculWithText = new CalculatorWithText();
         var calculWithList = new CalculatorWithList();
-        calculWithText.printCalculate(test_text);
+//        calculWithText.printCalculate(test_text);
         calculWithList.printCalculate(test_text);
-        Double resultWithText = calculWithText.calculate(test_text);
+//        Double resultWithText = calculWithText.calculate(test_text);
         Double resultWithList = calculWithList.calculate(test_text);
-        System.out.println("Посчитано через текст: " + args[0] + " = " + resultWithText);
+//        System.out.println("Посчитано через текст: " + args[0] + " = " + resultWithText);
         System.out.println("Посчитано через список: " + args[0] + " = " + resultWithList);
 
     }

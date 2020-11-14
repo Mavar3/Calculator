@@ -16,7 +16,7 @@ public class CalculatorWithList extends CalculatorFather {
      */
     public void printCalculate(String text) {
         try {
-            System.out.println(countList(parseText(checkText(text))));
+            System.out.println(countList(parseText(expression.checkExpression(text))));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -30,7 +30,7 @@ public class CalculatorWithList extends CalculatorFather {
      */
     public Double calculate(String text) {
         try {
-            return countList(parseText(checkText(text)));
+            return countList(parseText(expression.checkExpression(text)));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -49,19 +49,19 @@ public class CalculatorWithList extends CalculatorFather {
             int division_position = list.indexOf("/");
             while (multiply_position != -1 || division_position != -1) {
                 if (multiply_position == -1) {
-                    list = arifmeticList(list, division_position);
+                    list = arithmeticList(list, division_position);
                     division_position = list.indexOf("/");
                 } else if (division_position == -1) {
-                    list = arifmeticList(list, multiply_position);
+                    list = arithmeticList(list, multiply_position);
                     multiply_position = list.indexOf("*");
                 } else {
                     if (multiply_position < division_position) {
-                        list = arifmeticList(list, multiply_position);
+                        list = arithmeticList(list, multiply_position);
                         multiply_position = list.indexOf("*");
                         division_position = list.indexOf("/"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                     }
                     if (division_position < multiply_position) {
-                        list = arifmeticList(list, division_position);
+                        list = arithmeticList(list, division_position);
                         multiply_position = list.indexOf("*"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                         division_position = list.indexOf("/");
                     }
@@ -71,19 +71,19 @@ public class CalculatorWithList extends CalculatorFather {
             int subtract_position = list.indexOf("-");
             while (add_position != -1 || subtract_position != -1) {
                 if (add_position == -1) {
-                    list = arifmeticList(list, subtract_position);
+                    list = arithmeticList(list, subtract_position);
                     subtract_position = list.indexOf("-");
                 } else if (subtract_position == -1) {
-                    list = arifmeticList(list, add_position);
+                    list = arithmeticList(list, add_position);
                     add_position = list.indexOf("+");
                 } else {
                     if (add_position < subtract_position) {
-                        list = arifmeticList(list, add_position);
+                        list = arithmeticList(list, add_position);
                         add_position = list.indexOf("+");
                         subtract_position = list.indexOf("-"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                     }
                     if (subtract_position < add_position) {
-                        list = arifmeticList(list, subtract_position);
+                        list = arithmeticList(list, subtract_position);
                         add_position = list.indexOf("+"); //Но можно просто убрать 1 т.к. он сдвигается на 1 символ
                         subtract_position = list.indexOf("-");
                     }
@@ -103,7 +103,7 @@ public class CalculatorWithList extends CalculatorFather {
      * @return Новый список. арифметический символ, числа до и после - выкинуту и записан результат действия.
      * В случае ошибки выдаётся null.
      */
-    private List<String> arifmeticList(List<String> list, int arifPos) throws DivisionException {
+    private List<String> arithmeticList(List<String> list, int arifPos) throws DivisionException {
         double count = 0.00;
         switch (list.get(arifPos)) {
             case "*":
@@ -137,37 +137,16 @@ public class CalculatorWithList extends CalculatorFather {
     private List<String> parseText(String text) throws EnviromentException {
         List<String> symbols = new ArrayList<String>();
         try {
-            symbols = enviromentArifmetic("symbols");
+            symbols = environment.arithmetic("symbols");
         }
         catch (Exception ex) {
             throw new EnviromentException("Ошибка переменной окружения", ex);
         }
         // Преобразование
         for (String symbol: symbols) {
-            String newSimbol = " " + symbol + " ";
-            text = text.replace(symbol, newSimbol);
+            String newSymbol = " " + symbol + " ";
+            text = text.replace(symbol, newSymbol);
         }
         return new LinkedList<String>(Arrays.asList(text.split(" ").clone()));
-    }
-
-    private List<String> enviromentArifmetic(String envName) throws EnviromentException {
-        // Считывание переменных из переменных окружения (усложнение кода! В данном случе - этот метод бесполезен)
-        var env = System.getenv();
-        String inputSymbols = env.get(envName);
-        if (inputSymbols == null) {
-            throw new EnviromentException("Переменная окружения не определена!");
-        }
-        List<String> symbols = new ArrayList<>();
-        for (int i = 0; i < inputSymbols.length(); i++) {
-            if (inputSymbols.charAt(i) != '+' && inputSymbols.charAt(i) != '-' && inputSymbols.charAt(i) != '*'
-                    && inputSymbols.charAt(i) != '/') {
-                throw new EnviromentException("В переменных окружения есть не подходящий символ!");
-            }
-            symbols.add(Character.toString(inputSymbols.charAt(i)));
-        }
-        if (symbols.isEmpty()) {
-            throw new EnviromentException("Нет символов!");
-        }
-        return symbols;
     }
 }

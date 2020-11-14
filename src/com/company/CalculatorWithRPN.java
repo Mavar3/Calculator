@@ -3,6 +3,7 @@ package com.company;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+
 import com.company.Exceptions.DivisionException;
 
 public class CalculatorWithRPN extends CalculatorFather {
@@ -12,7 +13,7 @@ public class CalculatorWithRPN extends CalculatorFather {
      */
     public void printCalculate(String text) {
         try {
-            System.out.println(rpnToAnswer(expressionToRPN(checkText(text))));
+            System.out.println(rpnToAnswer(expressionToRPN(expression.checkExpression(text))));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -26,7 +27,7 @@ public class CalculatorWithRPN extends CalculatorFather {
      */
     public Double calculate(String text) {
         try {
-            return rpnToAnswer(expressionToRPN(checkText(text)));
+            return rpnToAnswer(expressionToRPN(expression.checkExpression(text)));
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -91,13 +92,14 @@ public class CalculatorWithRPN extends CalculatorFather {
             priority = getPriority(text.charAt(i));
             switch (priority){
                 case 0:
-                    current += " " + text.charAt(i);
+                    current += text.charAt(i);
                     break;
                 case 1:
                 case 2:
+                    current += " ";
                     while(!stack.empty()) {
                         if(getPriority(stack.peek()) >= priority) {
-                            current += " " +stack.pop();
+                            current +=stack.pop() + " ";
                         }
                         else {
                             break;

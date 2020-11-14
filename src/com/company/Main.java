@@ -18,14 +18,16 @@ public class Main {
             ex.printStackTrace();
         }
         String test_text = args[0];
+        var calculWithRPN = new CalculatorWithRPN();
 //        var calculWithText = new CalculatorWithText();
-        var calculWithList = new CalculatorWithList();
+//        var calculWithList = new CalculatorWithList();
+        calculWithRPN.printCalculate(test_text);
 //        calculWithText.printCalculate(test_text);
-        calculWithList.printCalculate(test_text);
+//        calculWithList.printCalculate(test_text);
 //        Double resultWithText = calculWithText.calculate(test_text);
-        Double resultWithList = calculWithList.calculate(test_text);
+//        Double resultWithList = calculWithList.calculate(test_text);
 //        System.out.println("Посчитано через текст: " + args[0] + " = " + resultWithText);
-        System.out.println("Посчитано через список: " + args[0] + " = " + resultWithList);
+//        System.out.println("Посчитано через список: " + args[0] + " = " + resultWithList);
 
     }
 
